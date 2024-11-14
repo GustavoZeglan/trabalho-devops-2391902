@@ -35,6 +35,7 @@ services:
       FLASK_DB_NAME: school_db
 
   prometheus:
+    container_name: prometheus_container
     image: prom/prometheus:latest
     volumes:
       - /var/lib/jenkins/workspace/Trabalho/prometheus.yml:/etc/prometheus/prometheus.yml
@@ -44,6 +45,7 @@ services:
       - flask_app
 
   grafana:
+    container_name: grafana_container
     image: grafana/grafana:latest
     ports:
       - "3000:3000"
