@@ -1,60 +1,57 @@
-# docker-compose.yml
-version: '3.9'
+version: '3.7'
 
 services:
+  flask:
+    build:
+      context: ./flask
+      dockerfile: Dockerfile_flask
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+    depends_on:
+      - mariadb
+
   mariadb:
     build:
-      context: .
+      context: ./mariadb
       dockerfile: Dockerfile_mariadb
-    container_name: mariadb_container
     ports:
       - "3306:3306"
-    volumes:
-      - db_data:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: root_password
       MYSQL_DATABASE: school_db
       MYSQL_USER: flask_user
       MYSQL_PASSWORD: flask_password
 
-  flask_app:
-    build:
-      context: .
-      dockerfile: Dockerfile_flask
-    container_name: flask_app_container
-    ports:
-      - "5000:5000"
-    depends_on:
-      - mariadb
-    environment:
-      FLASK_APP: app
-      FLASK_ENV: development
-      FLASK_DB_HOST: mariadb
-      FLASK_DB_USER: flask_user
-      FLASK_DB_PASSWORD: flask_password
-      FLASK_DB_NAME: school_db
-
   prometheus:
-    container_name: prometheus_container
-    image: prom/prometheus:latest
+    image: prom/prometheus
     volumes:
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
     ports:
       - "9090:9090"
     depends_on:
-      - flask_app
+      - mysqld_exporter
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
+  mysqld_exporter:
+    image: prom/mysqld-exporter
+    ports:
+      - "9104:9104"
+    environment:
+      DATA_SOURCE_NAME: "user:password@(mariadb:3306)/"
+    depends_on:
+      - mariadb
 
   grafana:
-    container_name: grafana_container
-    image: grafana/grafana:latest
+    build:
+      context: ./grafana
+      dockerfile: Dockerfile_grafana
     ports:
       - "3000:3000"
-    volumes:
-      - grafana_data:/var/lib/grafana
     depends_on:
       - prometheus
-
-volumes:
-  db_data:
-  grafana_data:
-  prometheus_data:
+#    volumes:
+#      - ./grafana/provisioning:/etc/grafana/provisioning
+#      - ./grafana/dashboards:/var/lib/grafana/dashboards
