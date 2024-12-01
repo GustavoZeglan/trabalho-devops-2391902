@@ -5,7 +5,7 @@ pipeline {
         stage('Clone the Git repository and build the containers') {
             steps {
                 script {
-                    git branch: "main", url: "https://github.com/vinic1u/Trabalho_DevOps_2392132.git"
+                    git branch: "main", url: "git@github.com:GustavoZeglan/trabalho-devops-2391902.git"
                     sh 'docker-compose down -v'
                     sh 'docker-compose build'
                 }
