@@ -1,14 +1,15 @@
 pipeline {
     agent any
 
+    environment {
+        REPOSITORY = 'https://github.com/GustavoZeglan/trabalho-devops-2391902.git'
+        BRANCH = 'main'
+    }
+
     stages {
         stage('Clone the Git repository and build the containers') {
             steps {
-                script {
-                    git branch: "main", url: "git@github.com:GustavoZeglan/trabalho-devops-2391902.git"
-                    sh 'docker-compose down -v'
-                    sh 'docker-compose build'
-                }
+                git branch: "${BRANCH}", url: "${REPOSITORY}"
             }
         }
 
