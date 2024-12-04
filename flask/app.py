@@ -35,6 +35,7 @@ class Aluno(db.Model):
     sobrenome = db.Column(db.String(50), nullable=False)
     turma = db.Column(db.String(50), nullable=False)
     disciplinas = db.Column(db.String(200), nullable=False)
+    matricula = db.Column(db.String(20), nullable=False)
     
 # Tentar conectar até o MariaDB estar pronto
 attempts = 5
