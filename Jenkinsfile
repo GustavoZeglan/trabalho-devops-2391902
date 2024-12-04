@@ -4,12 +4,13 @@ pipeline {
     environment {
         REPOSITORY = 'https://github.com/GustavoZeglan/trabalho-devops-2391902.git'
         BRANCH = 'main'
+        CREDENTIAL = 'jenkins-user-github'
     }
 
     stages {
         stage('Clone the Git repository and build the containers') {
             steps {
-                git branch: "${BRANCH}", url: "${REPOSITORY}"
+                git branch: "${BRANCH}", credentialsId: "${CREDENTIAL}", url: "${REPOSITORY}"
             }
         }
 
