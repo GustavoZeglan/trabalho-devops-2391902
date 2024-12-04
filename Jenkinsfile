@@ -17,7 +17,7 @@ pipeline {
         stage('Start the containers and run the application tests') {
             steps {
                 script {
-                    sh 'docker-compose up -d mariadb flask test mysqld_exporter prometheus grafana'
+                    sh 'docker compose up -d mariadb flask test mysqld_exporter prometheus grafana'
                     sh 'sleep 40' 
 
                     try {
@@ -33,7 +33,7 @@ pipeline {
         stage('Keep the application running') {
             steps {
                 script {
-                    sh 'docker-compose up -d mariadb flask test mysqld_exporter prometheus grafana'
+                    sh 'docker compose up -d mariadb flask test mysqld_exporter prometheus grafana'
                 }
             }
         }
@@ -41,7 +41,7 @@ pipeline {
 
     post {
         failure {
-            sh 'docker-compose down -v'
+            sh 'docker compose down -v'
         }
     }
 }
