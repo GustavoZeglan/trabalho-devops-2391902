@@ -21,7 +21,7 @@ pipeline {
                     sh 'sleep 40' 
 
                     try {
-                        sh 'docker-compose run --rm test'
+                        sh 'docker compose run --rm test'
                     } catch (Exception e) {
                         currentBuild.result = 'FAILURE'
                         error "Application tests failed"
