@@ -8,40 +8,42 @@ pipeline {
     }
 
     stages {
-        stage('Clone the Git repository and build the containers') {
+        stage('Clone the Git repository') {
             steps {
                 git branch: "${BRANCH}", credentialsId: "${CREDENTIAL}", url: "${REPOSITORY}"
             }
         }
 
-        stage('Start the containers and run the application tests') {
+        stage('Start the containers') {
             steps {
                 script {
-                    sh 'docker compose up -d mariadb flask test mysqld_exporter prometheus grafana'
-                    sh 'sleep 40' 
+                    sh '''
+                        docker compose --build 
+                    '''
 
-                    try {
-                        sh 'docker compose run --rm test'
-                    } catch (Exception e) {
-                        currentBuild.result = 'FAILURE'
-                        error "Application tests failed"
-                    }
+                    sh '''
+                        docker compose up -d
+                    '''
                 }
             }
         }
 
-        stage('Keep the application running') {
+        stage('Make the tests') {
             steps {
                 script {
-                    sh 'docker compose up -d mariadb flask test mysqld_exporter prometheus grafana'
+                    sh 'sleep 40' 
+                    sh 'docker compose run --rm test'
                 }
             }
         }
     }
 
     post {
+        success {
+            echo 'Pipeline executed successfully'
+        }
         failure {
-            sh 'docker compose down -v'
+            echo 'Pipeline failed'
         }
     }
 }
