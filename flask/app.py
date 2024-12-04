@@ -67,7 +67,7 @@ for i in range(attempts):
 # Visão do modelo Aluno para o painel administrativo
 class AlunoModelView(ModelView):
     datamodel = SQLAInterface(Aluno)
-    list_columns = ['id', 'nome', 'sobrenome', 'turma', 'disciplinas']
+    list_columns = ['id', 'nome', 'sobrenome', 'turma', 'disciplinas', 'matricula']
 
 # Adicionar a visão do modelo ao AppBuilder
 appbuilder.add_view(
@@ -81,14 +81,14 @@ appbuilder.add_view(
 @app.route('/alunos', methods=['GET'])
 def listar_alunos():
     alunos = Aluno.query.all()
-    output = [{'id': aluno.id, 'nome': aluno.nome, 'sobrenome': aluno.sobrenome, 'turma': aluno.turma, 'disciplinas': aluno.disciplinas} for aluno in alunos]
+    output = [{'id': aluno.id, 'nome': aluno.nome, 'sobrenome': aluno.sobrenome, 'turma': aluno.turma, 'disciplinas': aluno.disciplinas, 'matricula': aluno.matricula} for aluno in alunos]
     return jsonify(output)
 
 # Rota para adicionar um aluno - Método POST
 @app.route('/alunos', methods=['POST'])
 def adicionar_aluno():
     data = request.get_json()
-    novo_aluno = Aluno(nome=data['nome'], sobrenome=data['sobrenome'], turma=data['turma'], disciplinas=data['disciplinas'])
+    novo_aluno = Aluno(nome=data['nome'], sobrenome=data['sobrenome'], turma=data['turma'], disciplinas=data['disciplinas'], matricula=data['matricula'])
     db.session.add(novo_aluno)
     db.session.commit()
     logger.info(f"Aluno {data['nome']} {data['sobrenome']} adicionado com sucesso!")
