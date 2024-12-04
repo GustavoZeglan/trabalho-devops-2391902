@@ -1,17 +1,7 @@
 
 services:
-  flask:
-    build:
-      context: ./flask
-      dockerfile: Dockerfile_flask
-    ports:
-      - "5000:5000"
-    environment:
-      - FLASK_ENV=development
-    depends_on:
-      - mariadb
-
   mariadb:
+    container_name: mariadb
     build:
       context: ./mariadb
       dockerfile: Dockerfile_mariadb
@@ -22,8 +12,26 @@ services:
       MYSQL_DATABASE: school_db
       MYSQL_USER: flask_user
       MYSQL_PASSWORD: flask_password
+    networks:
+      - app_network
+
+  flask:
+    container_name: flask_app
+    build:
+      context: ./flask
+      dockerfile: Dockerfile_flask
+    ports:
+      - "5000:5000"
+    environment:
+      - FLASK_ENV=development
+      - SQLALCHEMY_DATABASE_URI=mysql+pymysql://flask_user:flask_password@mariadb:3306/school_db
+    depends_on:
+      - mariadb
+    networks:
+      - app_network
 
   prometheus:
+    container_name: prometheus
     image: prom/prometheus
     volumes:
       - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml
@@ -33,8 +41,11 @@ services:
       - mysqld_exporter
     command:
       - "--config.file=/etc/prometheus/prometheus.yml"
+    networks:
+      - app_network
 
   mysqld_exporter:
+    container_name: mysqld_exporter
     image: prom/mysqld-exporter
     ports:
       - "9104:9104"
@@ -42,8 +53,11 @@ services:
       DATA_SOURCE_NAME: "user:password@(mariadb:3306)/"
     depends_on:
       - mariadb
+    networks:
+      - app_network
 
   grafana:
+    container_name: grafana
     build:
       context: ./grafana
       dockerfile: Dockerfile_grafana
@@ -51,11 +65,14 @@ services:
       - "3000:3000"
     depends_on:
       - prometheus
+    networks:
+      - app_network
 #    volumes:
 #      - ./grafana/provisioning:/etc/grafana/provisioning
 #      - ./grafana/dashboards:/var/lib/grafana/dashboards
 
   test:
+    container_name: test_flask_app
     build:
       context: ./flask
       dockerfile: Dockerfile_flask
@@ -64,6 +81,10 @@ services:
       - mariadb
       - flask
     environment:
-      - DATABASE_URL=mysql+pymysql://flask_user:flask_password@mariadb:3306/school_db
+      - DATABASE_URL=mysql+pymysql://root:root_password@mariadb/school_db
     networks:
-      - default  # Conecta o contêiner aos mesmos serviços de rede
+      - app_network  # Conecta o contêiner aos mesmos serviços de rede
+
+networks:
+  app_network:
+    driver: bridge
