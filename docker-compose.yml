@@ -67,23 +67,20 @@ services:
       - prometheus
     networks:
       - app_network
-#    volumes:
-#      - ./grafana/provisioning:/etc/grafana/provisioning
-#      - ./grafana/dashboards:/var/lib/grafana/dashboards
 
   test:
     container_name: test_flask_app
     build:
       context: ./flask
       dockerfile: Dockerfile_flask
-    command: ["pytest", "/app/test_flask_app.py"]  # Roda os testes no arquivo test_app.py
+    command: ["pytest", "/app/test_flask_app.py"]
     depends_on:
       - mariadb
       - flask
     environment:
       - DATABASE_URL=mysql+pymysql://root:root_password@mariadb/school_db
     networks:
-      - app_network  # Conecta o contêiner aos mesmos serviços de rede
+      - app_network
 
 networks:
   app_network:
