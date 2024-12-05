@@ -1,13 +1,10 @@
-# Projeto DevOps  
+# Criação de Ambiente Monitorado com Pipeline CI/CD  
 Este projeto apresenta um ambiente completo de DevOps, integrando uma aplicação web desenvolvida com Flask e um banco de dados MariaDB. A solução abrange uma pipeline de CI/CD automatizada no Jenkins e monitoramento em tempo real com Prometheus e Grafana, entregando um ciclo de desenvolvimento eficiente, automatizado e com alta observabilidade.
 
 ---
 
 ### Objetivo  
-Demonstrar a implementação de um fluxo completo de integração e entrega contínuas (CI/CD) com as seguintes funcionalidades: 
-- Automação de testes, build e deploy utilizando Jenkins;
-- Monitoramento detalhado de métricas da aplicação e do banco de dados com Prometheus e Grafana;
-- Criação de um ambiente confiável, escalável e observável para aplicações modernas.
+Implementar e configurar um ambiente completo de aplicação web com monitoramento e pipeline de CI/CD. Utilizar ferramentas como Jenkins, Prometheus e Grafana, configurando um fluxo automatizado desde o desenvolvimento até a visualização de métricas.
 
 ---
 
